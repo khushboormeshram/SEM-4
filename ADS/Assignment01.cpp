@@ -2,254 +2,355 @@
 #include<stack>
 using namespace std;
 
-struct node{
+struct node
+{
     int data;
-    node *right;
     node *left;
+    node *right;
 };
-node *CreateNode(int val){
+
+node *CreateNode(int val)
+{
     node *temp = new node();
     temp->data = val;
     temp->left = temp->right = NULL;
     return temp;
 }
-node *insertNode(node* root, int val){
-    if(root == NULL){
+
+node *InsertNode(node *root, int val)
+{
+    if(root == NULL)
+    {
         return CreateNode(val);
     }
-    if(val < root->data){
-        root->left = insertNode(root->left, val);
+    if(val < root->data)
+    {
+        root->left = InsertNode(root->left, val);
     }
-    else if(val > root->data){
-        root->right = insertNode(root->right, val);
+    if(val > root->data)
+    {
+        root->right = InsertNode(root->right, val);
     }
     return root;
 }
-void InOrder(node* root){
-    if(root == NULL){
-        return;
-    }
-    InOrder(root->left);
-    cout << root->data <<" ";
-    InOrder(root->right);
-}
-void PreOrder(node* root){
-    if(root == NULL){
-        return;
-    }
-    cout << root->data <<" ";
-    PreOrder(root->left);
-    PreOrder(root->right);
-}
-void PostOrder(node* root){
-    if(root == NULL){
-        return;
-    }
-    PostOrder(root->left);
-    PostOrder(root->right);
-    cout << root->data <<" ";
-}
-void NonRecursiveInOrder(node* root){
-    stack<node*>s;
-    node *current = root;
-    while(current != NULL || s.empty() == false){
-        while(current != NULL){
-            s.push(current);
-            current = current->left;
-        }
-        while(s.empty() == false){
-            current = s.top();
-            s.pop();
-            cout << current->data <<" ";
-            current = current->right;
-        }
-    }
-}
-void NonRecursivePreOrder(node* root){
-    stack<node*>s;
-    node *current = root;
-    while(current != NULL){
-        cout << current->data << " ";
-        s.push(current);
-        current = current->left;
 
+node *search(node *root, int data)
+{
+    if (root == NULL || root->data == data)
+    {
+        return root;
     }
-    while(s.empty() == false){
-        current = s.top();
-            s.pop();
-            current = current->right;
-        while(current != NULL){
-            cout << current->data << " ";
-            s.push(current);
-            current = current->left;
+    else if (data < root->data)
+    {
+        return search(root->left, data);
+    }
+    else
+    {
+        return search(root->right, data);
+    }
+}
+
+void Inorder(node *root)
+{
+    if(root == NULL)
+    {
+        return;
+    }
+    Inorder(root->left);
+    cout << root->data <<" ";
+    Inorder(root->right);
+}
+
+void Preorder(node *root)
+{
+    if(root == NULL)
+    {
+        return;
+    }
+    cout << root->data <<" ";
+    Preorder(root->left);
+    Preorder(root->right);
+}
+
+void Postorder(node *root)
+{
+    if(root == NULL)
+    {
+        return;
+    }
+    Postorder(root->left);
+    Postorder(root->right);
+    cout << root->data <<" ";
+}
+
+void NonRecursiveInOrder(node *root)
+{
+    stack<node*> s;
+    node *curr = root;
+
+    while(curr != NULL || !s.empty())
+    {
+        while(curr != NULL)
+        {
+            s.push(curr);
+            curr = curr->left;
         }
+            curr = s.top();
+            s.pop();
+            cout << curr->data <<" ";
+            curr = curr->right;
+    }
+}
+
+void NonRecursivePreOrder(node *root)
+{
+    stack <node*> s;
+    node *curr = root;
+
+    if(!root)
+    {
+        return;
     }
 
+    s.push(root);
+    while(!s.empty())
+    {
+        curr = s.top();
+        s.pop();
+        cout << curr->data <<" ";
+
+        if(curr->right != NULL)
+        {
+            s.push(curr->right);
+        }
+        if(curr->left != NULL)
+        {
+            s.push(curr->left);
+        }
+    }
+    return;
 }
-void NonRecursivePostOrder(node* root){
-    stack<node*>s1, s2;
-    node *current = root;
-    s1.push(current);
-    while(s1.empty() == false){
-        current = s1.top();
+
+void NonRecursivePostOrder(node *root)
+{
+    if(!root)
+    {
+        return;
+    }
+    stack<node*> s1, s2;
+    node *curr = root;
+
+    s1.push(curr);
+    while(!s1.empty())
+    {
+        curr = s1.top();
         s1.pop();
-        s2.push(current);
-    if(current->left != NULL){
-        s1.push(current->left);
-    }
-    if(current->right != NULL){
-        s1.push(current->right);
-    }
-    }
-    while(s2.empty() == false){
-        root = s2.top();
-        s2.pop();
-        cout << root->data <<" ";
-    }
+        s2.push(curr);
 
+        if(curr->left != NULL)
+        {
+            s1.push(curr->left);
+        }
+        if(curr->right != NULL)
+        {
+            s1.push(curr->right);
+        }
+    }
+        while(!s2.empty())
+        {
+            root = s2.top();
+            s2.pop();
+            cout << root->data <<" ";
+        }
 }
 
-int hei
-int tree_height(node *root)
+int height(node *root)
 {
     if (!root)
     {
         return 0;
     }
-    int left_height = tree_height(root->left);
-    int right_height = tree_height(root->right);
-    return max(left_height, right_height) + 1;
+    int lheight = height(root->left);
+    int rheight = height(root->right);
+    return 1 + max(lheight, rheight);
 }
 
-void print_level(node *root, int level_no)
+void printLevel(node *root, int levelNo)
 {
     if (!root)
     {
         return;
     }
-    if (level_no == 0)
+    if (levelNo == 0)
     {
         cout << root->data << " ";
     }
     else
     {
-        print_level(root->left, level_no - 1);
-        print_level(root->right, level_no - 1);
+        printLevel(root->left, levelNo - 1);
+        printLevel(root->right, levelNo - 1);
     }
 }
 
-void LevelwisePrinting(node *root)
+void LevelWisePrinting(node *root)
 {
     if (!root)
     {
         cout << "Tree is empty!" << endl;
         return;
     }
-    int height = tree_height(root);
-    for (int i = 0; i < height; i++)
+    int ht = height(root);
+    for (int i = 0; i < ht; i++)
     {
-        print_level(root, i);
+        printLevel(root, i);
         cout << endl;  
     }
 }
 
+node *getSuccessor(node *curr)
+{
+    curr = curr->right;
+    while (curr != NULL && curr->left != NULL)
+    {
+        curr = curr->left;
+    }
+    return curr;
+}
 
-int main(){
-    int choice, num;
-    node* root = NULL;
+
+node *DeleteNode(node *root, int key)
+{
+    if (root == NULL)
+    {
+        return root;
+    }
+    if (root->data > key)
+    {
+        root->left = DeleteNode(root->left, key);
+    }
+    else if (root->data < key)
+    {
+        root->right = DeleteNode(root->right, key);
+    }
+    else
+    {
+        if (root->left == NULL)
+        {
+            node *temp = root->right;
+            delete root;
+            return temp;
+        }
+        if (root->right == NULL)
+        {
+            node *temp = root->left;
+            delete root;
+            return temp;
+        }
+
+        node *succ = getSuccessor(root);
+        root->data = succ->data;
+        root->right = DeleteNode(root->right, succ->data);
+    }
+    return root;
+}
+
+
+int main()
+{
+    node *root = NULL;
+    node *result = NULL;
+
+    int choice, num, element;
     char ch;
 
-    do{
-        cout << "1.Insertion" << endl;
-        cout << "2.Recursive Inorder" << endl;
-        cout << "3.Recursive Preorder" << endl;
-        cout << "4.Recursive Postorder" << endl;
-        cout << "5.Non Recursive Inorder" << endl;
-        cout << "6.Non Recursive Preorder" << endl;
-        cout << "7.Non Recursive Postorder" << endl;
-        cout << "8.Level Wise Printing" << endl;
-        cout << "9.Deletion" << endl;
-        cout << "10.Search" << endl;
-        cout << "11. Exit" << endl;
-        cout <<"Enter your choice : ";
+    do
+    {
+        cout << endl;
+        cout <<"1.Insertion"<< endl;
+        cout <<"2.Searching"<< endl;
+        cout <<"3.Recursive Inorder"<< endl;
+        cout <<"4.Recursive Preorder"<< endl;
+        cout <<"5.Recursive Postorder"<< endl;
+        cout <<"6.Non Recursive Inorder"<< endl;
+        cout <<"7.Non Recursive Preorder"<< endl;
+        cout <<"8.Non Recursive Postorder"<< endl;
+        cout <<"9.Level Wise Printing"<< endl;
+        cout <<"10.Deletion"<< endl;
+        cout << "Enter your choice: ";
         cin >> choice;
-        switch(choice){
+
+        switch(choice)
+        {
             case 1:
-            cout <<"Enter the num you want to insert : ";
+            cout <<"Enter the number you want to insert - ";
             cin >> num;
-            root = insertNode(root, num);
-            cout << endl;
+            for(int i = 0; i < num; i++)
+            root = InsertNode(root, num);
             break;
 
             case 2:
-            cout <<"Recursive Inorder is : ";
-            InOrder(root);
-            cout << endl;
+            cout << "Enter element to search: ";
+            cin >> element;
+            result = search(root, element);
+            if (result != NULL)
+            {
+                cout << "Element Found!" << endl;
+            }
+            else
+            {
+                cout << "Element Not Found!" << endl;
+            }
             break;
 
             case 3:
-            cout <<"Recursive Preorder is : ";
-            PreOrder(root);
-            cout << endl;
+            cout <<"Inorder is - ";
+            Inorder(root);
             break;
 
             case 4:
-            cout <<"Recursive Postorder is : ";
-            PostOrder(root);
-            cout << endl;
+            cout <<"Preorder is - ";
+            Preorder(root);
             break;
 
             case 5:
-            cout <<"Non Recursive Inorder is : ";
-            NonRecursiveInOrder(root);
-            cout << endl;
+            cout <<"Postorder is - ";
+            Postorder(root);
             break;
 
             case 6:
-            cout <<"Non Recursive Preorder is : ";
-            NonRecursivePreOrder(root);
-            cout << endl;
+            cout <<"Inorder is - ";
+            NonRecursiveInOrder(root);
             break;
 
             case 7:
-            cout <<"Non Recursive Postorder is : ";
-            NonRecursivePostOrder(root);
-            cout << endl;
+            cout <<"Preorder is - ";
+            NonRecursivePreOrder(root);
             break;
 
             case 8:
-            cout <<"Level Wise Printing : ";
-            LevelwisePrinting(root);
+            cout <<"Postorder is - ";
+            NonRecursivePostOrder(root);
             break;
 
-            // case 9:
-            // break;
+            case 9:
+            cout <<"Level Wise Printing : ";
+            LevelWisePrinting(root);
+            break;
 
-            // case 10:
-            // cout << "Enter element to search: ";
-            // cin >> element;
-            // node *result = search(root, element);
-            // if (result != NULL)
-            // {
-            //     cout << "Element Found!" << endl;
-            // }
-            // else
-            // {
-            //     cout << "Element Not Found!" << endl;
-            // }
-            // break;
-
-            case 11:
-            cout <<"Exit";
+            case 10:
+            cout << "Enter element to delete: ";
+            cin >> element;
+            root = DeleteNode(root, element);
+            cout << "Deleted" << endl;
             break;
 
             default:
-            cout <<"Wrong choice"<< endl;
+            cout <<"Wrong choice";
             break;
 
-            cout <<"Do you want to continue ?"<< endl;
+            cout <<"Do you want to continue ? ";
             cin >> ch;
-
         }
-    }while(ch != 'N');
+    }
+    while(ch != 'N' || ch != 'n');
 }
